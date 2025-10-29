@@ -11,3 +11,30 @@ Simple Chat UI using Gemma model via Ollama, LangChain and Chainlit
 
 You must have Python 3.10 or later installed. Earlier versions of python may not compile.
 
+## Installation
+
+Follow these steps to set up the project locally:
+
+1. Clone the repository:
+```
+git clone https://github.com/raghugudla/ragllm.git/
+cd your-repo
+```
+
+2. Create below directories
+```
+mkdir data/sources
+mkdir data/chroma_db
+```
+
+3. Execute below commands
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+4. Launch UI
+```
+chainlit run main.py
+```
