@@ -7,3 +7,4 @@ data/sources/*
 data/chroma_db/*
 tmp/
 cmds.txt 
+public/
