@@ -1,9 +1,11 @@
+import asyncio
+
 import chainlit as cl
 from dotenv import load_dotenv
+from utils.fileutils import ingest_attachments
 from rag_retrieve import retrieve_context
 from rag_augment import format_context, extract_doc_names, build_augmented_prompt
 from rag_generate import get_chain, AVAILABLE_MODELS
-import asyncio
 
 load_dotenv()
 
@@ -33,6 +35,9 @@ async def main(message: cl.Message):
     selected_model = cl.user_session.get("selected_model") or AVAILABLE_MODELS[0]
     chain = get_chain(selected_model)
 
+    attachments = ingest_attachments(message)
+    #print(f"attachments: {attachments}")
+    
     user_q = message.content
     #print(f"User query: {user_q}")
 

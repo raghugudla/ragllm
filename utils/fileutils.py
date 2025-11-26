@@ -4,6 +4,8 @@ from uuid import uuid4
 
 import chainlit as cl
 
+from ingestion import ingest_doc_to_chroma
+
 
 UPLOAD_DIR = Path(__file__).resolve().parent.parent / "data" / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -24,7 +26,7 @@ def _persist_upload(file_bytes: bytes, filename: str) -> Path:
     return target_path
 
 
-def extract_attachments(message: cl.Message) -> List[Dict[str, Any]]:
+def ingest_attachments(message: cl.Message) -> List[Dict[str, Any]]:
     """
     Extract file attachments from a Chainlit message, persist to disk, and return metadata.
 
@@ -53,6 +55,14 @@ def extract_attachments(message: cl.Message) -> List[Dict[str, Any]]:
             file_bytes = b""
 
         saved_path = _persist_upload(file_bytes, element.name or "upload")
+
+        # Ingest the saved file into the local Chroma DB using the RAG-Anything
+        # ingestion pipeline, so uploaded documents become immediately searchable.
+        try:
+            ingest_doc_to_chroma(str(saved_path))
+        except Exception as e:
+            # Don't break the chat flow if ingestion fails; just log to stdout.
+            print(f"Warning: failed to ingest uploaded file {saved_path} into Chroma: {e}")
 
         attachments.append(
             {
